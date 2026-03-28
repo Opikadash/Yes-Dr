@@ -1,0 +1,10 @@
+fastapi==0.115.8
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-multipart==0.0.9
+requests==2.32.3
+prometheus-client==0.20.0
+
+pypdf==4.3.1
+

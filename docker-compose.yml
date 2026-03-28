@@ -1,0 +1,37 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3
+      - DATA_DIR=/app/data
+      - HF_HOME=/app/.cache/huggingface
+    volumes:
+      - ./data:/app/data
+      - hf_cache:/app/.cache/huggingface
+    depends_on:
+      - ollama
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - RAG_API_BASE=http://api:8000
+    depends_on:
+      - api
+
+volumes:
+  ollama:
+  hf_cache:

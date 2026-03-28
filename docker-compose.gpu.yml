@@ -1,0 +1,55 @@
+services:
+  # vLLM provides an OpenAI-compatible server. Set LLM_BACKEND=openai_compat to use it.
+  vllm:
+    image: vllm/vllm-openai:latest
+    ports:
+      - "8001:8000"
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HUGGING_FACE_HUB_TOKEN-}
+    # Requires NVIDIA Container Toolkit on the host.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+    command:
+      - --model
+      - ${VLLM_MODEL:-meta-llama/Meta-Llama-3-8B-Instruct}
+      - --dtype
+      - auto
+      - --max-model-len
+      - "8192"
+      - --gpu-memory-utilization
+      - "0.90"
+      - --served-model-name
+      - llama3
+
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATA_DIR=/app/data
+      - HF_HOME=/app/.cache/huggingface
+      - LLM_BACKEND=openai_compat
+      - OPENAI_COMPAT_BASE_URL=http://vllm:8000/v1
+      - OPENAI_COMPAT_MODEL=llama3
+    volumes:
+      - ./data:/app/data
+      - hf_cache:/app/.cache/huggingface
+    depends_on:
+      - vllm
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - RAG_API_BASE=http://api:8000
+    depends_on:
+      - api
+
+volumes:
+  hf_cache:

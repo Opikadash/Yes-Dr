@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yes Doctor - Medical Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">YD</div>
+        <div>
+          <div class="title">Yes Doctor - Medical Assistant</div>
+          <div class="subtitle">Private, local RAG over your medical documents</div>
+        </div>
+      </div>
+      <div class="status" id="statusPill">Connecting…</div>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2>Ingest documents</h2>
+        <p class="muted">Upload PDFs or text files. The system chunks, embeds, and indexes locally.</p>
+
+        <form id="uploadForm" class="form">
+          <label class="label">File</label>
+          <input type="file" id="fileInput" />
+
+          <label class="label">Source label (optional)</label>
+          <input type="text" id="sourceInput" placeholder="e.g. NICE-guideline, paper-2021, textbook" />
+
+          <div class="row">
+            <label class="checkbox">
+              <input type="checkbox" id="asyncMode" checked />
+              <span>Background ingest</span>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="forceIngest" />
+              <span>Force (skip dedup)</span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn">Upload & Index</button>
+        </form>
+
+        <div class="divider"></div>
+        <div class="kv">
+          <div class="k">Store</div>
+          <div class="v" id="storeStats">—</div>
+          <div class="k">Models</div>
+          <div class="v" id="modelStats">—</div>
+        </div>
+
+        <div class="divider"></div>
+        <div id="ingestLog" class="log"></div>
+      </section>
+
+      <section class="card">
+        <div class="chatHeader">
+          <h2>Ask a question</h2>
+          <div class="row">
+            <input id="modelInput" class="modelInput" placeholder="Model (default from server)" />
+            <input id="topKInput" class="modelInput" placeholder="top_k (default)" />
+          </div>
+        </div>
+
+        <div id="chat" class="chat"></div>
+
+        <form id="chatForm" class="chatForm">
+          <input id="questionInput" placeholder="Ask about your uploaded documents…" autocomplete="off" />
+          <button class="btn" type="submit">Send</button>
+        </form>
+
+        <details class="sources">
+          <summary>Last retrieved sources</summary>
+          <div id="sourcesBox" class="sourcesBox muted">—</div>
+        </details>
+
+        <div class="note">
+          This is a demo. Always verify medical information with a qualified clinician.
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
