@@ -6,6 +6,7 @@ import logging
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response, StreamingResponse
@@ -180,7 +181,7 @@ def _ingest_bytes(*, filename: str, content: bytes, source: str | None, force: b
 @app.post("/upload-doc", response_model=UploadResponse | UploadJobResponse)
 async def upload_doc(
     background: BackgroundTasks,
-    file: UploadFile = File(...),
+    file: Annotated[UploadFile, File(...)],
     source: str | None = None,
     async_mode: bool = False,
     force: bool = False,
@@ -211,7 +212,7 @@ async def upload_doc(
 
 @app.post("/upload-docs")
 async def upload_docs(
-    files: list[UploadFile] = File(...),
+    files: Annotated[list[UploadFile], File(...)],
     source: str | None = None,
     force: bool = False,
 ):

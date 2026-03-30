@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from pypdf import PdfReader
 
 from .text_utils import normalize_text
@@ -32,4 +30,3 @@ def io_bytes_to_pathless_stream(content: bytes):
     import io
 
     return io.BytesIO(content)
-

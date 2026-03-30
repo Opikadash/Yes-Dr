@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 import requests
 
@@ -85,4 +86,3 @@ class OpenAICompatBackend(LLMBackend):
                     token = None
                 if token:
                     yield str(token)
-

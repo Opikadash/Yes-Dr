@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 
 def build_prompt(*, question: str, context: str) -> str:
@@ -25,4 +25,3 @@ def format_sources_for_prompt(chunks: Iterable) -> list[str]:
         text = getattr(c, "text", "")
         blocks.append(f"[{label}] source={src} chunk_id={cid}\n{text}")
     return blocks
-
