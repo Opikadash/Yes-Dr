@@ -200,8 +200,8 @@ async def upload_doc(
     def run():
         jobs.set_running(job.id)
         try:
-            result = _ingest_bytes(filename=filename, content=content, source=source, force=force).model_dump()
-            jobs.set_done(job.id, result)
+            ingested = _ingest_bytes(filename=filename, content=content, source=source, force=force)
+            jobs.set_done(job.id, ingested.model_dump())
         except Exception as e:
             jobs.set_error(job.id, str(e))
 
@@ -225,7 +225,8 @@ async def upload_docs(
         if len(content) > settings.max_upload_mb * 1024 * 1024:
             continue
         filename = f.filename or "upload"
-        results.append(_ingest_bytes(filename=filename, content=content, source=source, force=force).model_dump())
+        ingested = _ingest_bytes(filename=filename, content=content, source=source, force=force)
+        results.append(ingested.model_dump())
     return {"results": results}
 
 
@@ -246,7 +247,7 @@ def query(req: QueryRequest):
         with timer(OLLAMA_GENERATION_DURATION_SECONDS, "sync"):
             answer = llm.generate(model=model, prompt=prompt)
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"LLM backend error: {e}")
+        raise HTTPException(status_code=502, detail=f"LLM backend error: {e}") from e
 
     sources = [{"id": c.id, "source": c.source, "preview": c.text[:200]} for c in retrieved]
     return QueryResponse(answer=answer.strip(), sources=sources)
@@ -281,7 +282,17 @@ def query_stream(req: QueryRequest):
 
 @app.get("/v1/models")
 def v1_models():
-    return {"object": "list", "data": [{"id": default_model, "object": "model", "created": 0, "owned_by": "local"}]}
+    return {
+        "object": "list",
+        "data": [
+            {
+                "id": default_model,
+                "object": "model",
+                "created": 0,
+                "owned_by": "local",
+            }
+        ],
+    }
 
 
 @app.post("/v1/chat/completions")
@@ -318,7 +329,7 @@ def v1_chat_completions(req: ChatCompletionRequest):
             with timer(OLLAMA_GENERATION_DURATION_SECONDS, "sync"):
                 answer = llm.generate(model=model, prompt=prompt).strip()
         except Exception as e:
-            raise HTTPException(status_code=502, detail=f"LLM backend error: {e}")
+            raise HTTPException(status_code=502, detail=f"LLM backend error: {e}") from e
 
         return {
             "id": completion_id,

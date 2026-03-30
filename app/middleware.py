@@ -22,7 +22,10 @@ async def request_logging_middleware(request: Request, call_next):
         path = request.url.path
         HTTP_REQUESTS_TOTAL.labels(request.method, path, "500").inc()
         HTTP_REQUEST_DURATION_SECONDS.labels(request.method, path).observe(duration)
-        logger.exception("request_failed", extra={"request_id": request_id, "method": request.method, "path": path})
+        logger.exception(
+            "request_failed",
+            extra={"request_id": request_id, "method": request.method, "path": path},
+        )
         raise
 
     duration = time.perf_counter() - start
@@ -42,4 +45,3 @@ async def request_logging_middleware(request: Request, call_next):
         },
     )
     return response
-
