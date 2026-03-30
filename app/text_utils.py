@@ -28,16 +28,29 @@ def chunk_text(text: str, *, chunk_size: int, overlap: int) -> list[str]:
 
 
 def join_context(chunks: Iterable[str], *, max_chars: int) -> str:
+    sep = "\n\n---\n\n"
     out: list[str] = []
     total = 0
     for c in chunks:
         if not c:
             continue
+
+        sep_len = len(sep) if out else 0
         remaining = max_chars - total
         if remaining <= 0:
             break
-        piece = c if len(c) <= remaining else c[:remaining]
-        out.append(piece)
-        total += len(piece)
-    return "\n\n---\n\n".join(out)
+        if sep_len and remaining <= sep_len:
+            break
 
+        remaining_after_sep = remaining - sep_len
+        if remaining_after_sep <= 0:
+            break
+
+        piece = c if len(c) <= remaining_after_sep else c[:remaining_after_sep]
+        if not piece:
+            break
+
+        out.append(piece)
+        total += sep_len + len(piece)
+
+    return sep.join(out)
