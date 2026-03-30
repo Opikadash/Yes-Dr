@@ -2,6 +2,15 @@
   "buildCommand": "cd web && npm install && npm run build",
   "outputDirectory": "web/dist",
   "installCommand": "cd web && npm install",
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "http://103.161.223.15:3000/api/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "http://103.161.223.15:3000/v1/:path*"
+    }
+  ]
 }
-
