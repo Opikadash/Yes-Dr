@@ -46,9 +46,12 @@ def timer(hist: Histogram, *labels):
     try:
         yield
     finally:
-        hist.labels(*labels).observe(time.perf_counter() - start) if labels else hist.observe(time.perf_counter() - start)
+        duration = time.perf_counter() - start
+        if labels:
+            hist.labels(*labels).observe(duration)
+        else:
+            hist.observe(duration)
 
 
 def render_metrics():
     return generate_latest(), CONTENT_TYPE_LATEST
-

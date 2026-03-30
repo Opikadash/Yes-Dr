@@ -17,7 +17,13 @@ class Result:
     streamed: bool = False
 
 
-async def one(client: httpx.AsyncClient, url: str, question: str, top_k: int | None, model: str | None) -> Result:
+async def one(
+    client: httpx.AsyncClient,
+    url: str,
+    question: str,
+    top_k: int | None,
+    model: str | None,
+) -> Result:
     payload: dict = {"question": question}
     if top_k is not None:
         payload["top_k"] = top_k

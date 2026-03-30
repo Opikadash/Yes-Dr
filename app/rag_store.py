@@ -156,7 +156,12 @@ class RAGStore:
             )
 
     def _encode(self, texts: list[str]) -> np.ndarray:
-        emb = self.model.encode(texts, normalize_embeddings=True, convert_to_numpy=True, show_progress_bar=False)
+        emb = self.model.encode(
+            texts,
+            normalize_embeddings=True,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
         if emb.dtype != np.float32:
             emb = emb.astype(np.float32)
         return emb
