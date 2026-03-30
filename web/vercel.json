@@ -1,0 +1,17 @@
+{
+  "framework": "vite",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://hoping-promised-blvd-paintings.trycloudflare.com/api/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "https://hoping-promised-blvd-paintings.trycloudflare.com/v1/:path*"
+    }
+  ]
+}
+
